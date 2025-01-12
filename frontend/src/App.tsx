@@ -34,21 +34,28 @@ const App: React.FC = () => {
     setBooks(books.filter((book) => book.id !== id));
   };
 
-  const borrowBook = (id: number, user: string) => {
-    const updatedBooks = books.map((book) =>
-      book.id === id ? { ...book, borrowedBy: user } : book
-    );
-    setBooks(updatedBooks);
+  const isOverdue = (dueDate?: string) => {
+  return dueDate ? new Date(dueDate) < new Date() : false;
+};
 
-    const userRecord = userRecords.find((record) => record.name === user);
-    if (userRecord) {
-      userRecord.borrowedBooks.push(
-        books.find((book) => book.id === id)?.title || ""
-      );
-    } else {
-      setUserRecords([...userRecords, { name: user, borrowedBooks: [books.find((book) => book.id === id)?.title || ""] }]);
-    }
-  };
+
+const borrowBook = (id: number, user: string) => {
+  const updatedBooks = books.map((book) =>
+    book.id === id ? { ...book, borrowedBy: user, dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString() } : book
+  );
+  setBooks(updatedBooks);
+
+  const userRecord = userRecords.find((record) => record.name === user);
+  if (userRecord) {
+    userRecord.borrowedBooks.push(books.find((book) => book.id === id)?.title || "");
+  } else {
+    setUserRecords([
+      ...userRecords,
+      { name: user, borrowedBooks: [books.find((book) => book.id === id)?.title || ""] },
+    ]);
+  }
+};
+
 
   const returnBook = (id: number) => {
     const updatedBooks = books.map((book) =>
