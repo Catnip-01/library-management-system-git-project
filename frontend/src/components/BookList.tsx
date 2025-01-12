@@ -5,7 +5,9 @@ interface Book {
   title: string;
   author: string;
   borrowedBy?: string;
+  dueDate?: string; // Store as ISO string
 }
+
 
 interface BookListProps {
   books: Book[];
